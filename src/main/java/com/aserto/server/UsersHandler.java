@@ -54,21 +54,23 @@ public class UsersHandler implements HttpHandler {
         Map<String, Value> resourceCtx = java.util.Map.of("personalId", Value.newBuilder().setStringValue(personalId).build());
 
         boolean allowed = authHelper.isAllowed(identityCtx, policyCtx, resourceCtx);
-        if (allowed)  {
-            Object directoryUser = directoryHelper.getUserByKey(personalId);
-            Map<String, Value> userProperties = directoryUser.getProperties().getFieldsMap();
-
-            User user = new User(directoryUser.getKey(),directoryUser.getDisplayName(), userProperties.get("email").getStringValue(), userProperties.get("picture").getStringValue());
-            String response = objectMapper.writeValueAsString(user);
-
-            exchange.sendResponseHeaders(200, response.length());
-            OutputStream outputStream = exchange.getResponseBody();
-            outputStream.write(response.getBytes());
-            outputStream.flush();
-            outputStream.close();
-        } else {
+        if (!allowed) {
             exchange.sendResponseHeaders(403, 0);
+            exchange.close();
+            return;
         }
+
+        Object directoryUser = directoryHelper.getUserByKey(personalId);
+        Map<String, Value> userProperties = directoryUser.getProperties().getFieldsMap();
+
+        User user = new User(directoryUser.getKey(),directoryUser.getDisplayName(), userProperties.get("email").getStringValue(), userProperties.get("picture").getStringValue());
+        String response = objectMapper.writeValueAsString(user);
+
+        exchange.sendResponseHeaders(200, response.length());
+        OutputStream outputStream = exchange.getResponseBody();
+        outputStream.write(response.getBytes());
+        outputStream.flush();
+        outputStream.close();
         exchange.close();
     }
 

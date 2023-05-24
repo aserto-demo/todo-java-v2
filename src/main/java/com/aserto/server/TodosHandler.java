@@ -62,17 +62,18 @@ public class TodosHandler implements HttpHandler {
         PolicyCtx policyCtx = new PolicyCtx("todo", "todo", "todoApp.GET.todos", new String[]{ALLOWED});
 
         boolean allowed = authHelper.isAllowed(identityCtx, policyCtx);
-        if (allowed)  {
-            String response = objectMapper.writeValueAsString(todoStore.getTodos());
-
-            exchange.sendResponseHeaders(200, response.length());
-            OutputStream outputStream = exchange.getResponseBody();
-            outputStream.write(response.getBytes());
-            outputStream.flush();
-            outputStream.close();
-        } else {
+        if (!allowed) {
             exchange.sendResponseHeaders(403, 0);
+            return;
         }
+
+        String response = objectMapper.writeValueAsString(todoStore.getTodos());
+
+        exchange.sendResponseHeaders(200, response.length());
+        OutputStream outputStream = exchange.getResponseBody();
+        outputStream.write(response.getBytes());
+        outputStream.flush();
+        outputStream.close();
     }
 
     private void setOptions(HttpExchange exchange) throws IOException {
@@ -89,28 +90,29 @@ public class TodosHandler implements HttpHandler {
         PolicyCtx policyCtx = new PolicyCtx("todo", "todo", "todoApp.POST.todos", new String[]{ALLOWED});
 
         boolean allowed = authHelper.isAllowed(identityCtx, policyCtx);
-        if (allowed)  {
-            JwtDecoder jwtDecoder = new JwtDecoder(jwtToken);
-            String payload = jwtDecoder.decodePayload();
-            User user = objectMapper.readValue(payload, User.class);
-
-            String value = getResponseBody(exchange);
-            Todo todo = objectMapper.readValue(value, Todo.class);
-            todo.setOwnerID(user.getKey());
-
-            todoStore.saveTodo(todo);
-
-            String response = "{\"msg\":\"Todo created\"}";
-
-            exchange.sendResponseHeaders(200, response.length());
-
-            OutputStream outputStream = exchange.getResponseBody();
-            outputStream.write(response.getBytes());
-            outputStream.flush();
-            outputStream.close();
-        } else {
+        if (!allowed) {
             exchange.sendResponseHeaders(403, 0);
+            return;
         }
+
+        JwtDecoder jwtDecoder = new JwtDecoder(jwtToken);
+        String payload = jwtDecoder.decodePayload();
+        User user = objectMapper.readValue(payload, User.class);
+
+        String value = getResponseBody(exchange);
+        Todo todo = objectMapper.readValue(value, Todo.class);
+        todo.setOwnerID(user.getKey());
+
+        todoStore.saveTodo(todo);
+
+        String response = "{\"msg\":\"Todo created\"}";
+
+        exchange.sendResponseHeaders(200, response.length());
+
+        OutputStream outputStream = exchange.getResponseBody();
+        outputStream.write(response.getBytes());
+        outputStream.flush();
+        outputStream.close();
     }
 
     private String getResponseBody(HttpExchange exchange) throws IOException {
@@ -137,22 +139,23 @@ public class TodosHandler implements HttpHandler {
         Map<String, Value> resourceCtx = java.util.Map.of("personalId", Value.newBuilder().setStringValue(personalId).build());
 
         boolean allowed = authHelper.isAllowed(identityCtx, policyCtx, resourceCtx);
-        if (allowed)  {
-            String value = getResponseBody(exchange);
-            Todo todo = objectMapper.readValue(value, Todo.class);
-            todoStore.updateTodoById(todo.getId(), todo);
-
-            String response = "{\"msg\":\"Todo updated\"}";
-
-            exchange.sendResponseHeaders(200, response.length());
-
-            OutputStream outputStream = exchange.getResponseBody();
-            outputStream.write(response.getBytes());
-            outputStream.flush();
-            outputStream.close();
-        } else {
+        if (!allowed) {
             exchange.sendResponseHeaders(403, 0);
+            return;
         }
+
+        String value = getResponseBody(exchange);
+        Todo todo = objectMapper.readValue(value, Todo.class);
+        todoStore.updateTodoById(todo.getId(), todo);
+
+        String response = "{\"msg\":\"Todo updated\"}";
+
+        exchange.sendResponseHeaders(200, response.length());
+
+        OutputStream outputStream = exchange.getResponseBody();
+        outputStream.write(response.getBytes());
+        outputStream.flush();
+        outputStream.close();
     }
 
     private void deleteTodos(HttpExchange exchange) throws IOException {
@@ -163,21 +166,22 @@ public class TodosHandler implements HttpHandler {
         Map<String, Value> resourceCtx = java.util.Map.of("personalId", Value.newBuilder().setStringValue(personalId).build());
 
         boolean allowed = authHelper.isAllowed(identityCtx, policyCtx, resourceCtx);
-        if (allowed)  {
-            String value = getResponseBody(exchange);
-            Todo todo = objectMapper.readValue(value, Todo.class);
-            todoStore.deleteTodoById(todo.getId());
-
-            String response = "{\"msg\":\"Todo deleted\"}";
-
-            exchange.sendResponseHeaders(200, response.length());
-            OutputStream outputStream = exchange.getResponseBody();
-            outputStream.write(response.getBytes());
-            outputStream.flush();
-            outputStream.close();
-        } else {
+        if (!allowed) {
             exchange.sendResponseHeaders(403, 0);
+            return;
         }
+
+        String value = getResponseBody(exchange);
+        Todo todo = objectMapper.readValue(value, Todo.class);
+        todoStore.deleteTodoById(todo.getId());
+
+        String response = "{\"msg\":\"Todo deleted\"}";
+
+        exchange.sendResponseHeaders(200, response.length());
+        OutputStream outputStream = exchange.getResponseBody();
+        outputStream.write(response.getBytes());
+        outputStream.flush();
+        outputStream.close();
     }
 
     private String extractPersonalId(String url) {
