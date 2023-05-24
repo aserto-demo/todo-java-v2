@@ -1,4 +1,4 @@
-package com.aserto.server;
+package com.aserto.store;
 
 import com.aserto.DirectoryClient;
 import com.aserto.directory.common.v2.Object;
@@ -11,9 +11,9 @@ import com.aserto.directory.reader.v2.GetObjectResponse;
 import com.aserto.directory.reader.v2.GetRelationRequest;
 import com.aserto.directory.reader.v2.GetRelationResponse;
 
-public class DirectoryHelper {
+public class UserStore {
     private DirectoryClient directoryClient;
-    public DirectoryHelper(DirectoryClient directoryClient) {
+    public UserStore(DirectoryClient directoryClient) {
         this.directoryClient = directoryClient;
     }
 

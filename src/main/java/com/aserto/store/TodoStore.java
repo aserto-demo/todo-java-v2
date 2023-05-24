@@ -1,4 +1,4 @@
-package com.aserto;
+package com.aserto.store;
 
 import com.aserto.dao.Todo;
 import org.hibernate.Session;

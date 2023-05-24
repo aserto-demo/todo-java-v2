@@ -5,13 +5,14 @@ import com.aserto.DirectoryClient;
 import com.aserto.authorizer.v2.api.IdentityType;
 import com.aserto.dao.Todo;
 import com.aserto.model.*;
+import com.aserto.store.TodoStore;
+import com.aserto.store.UserStore;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.protobuf.Value;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-import com.aserto.TodoStore;
 import com.aserto.directory.common.v2.Object;
 
 import java.io.*;
@@ -20,14 +21,14 @@ import java.util.Map;
 
 public class TodosHandler implements HttpHandler {
     private static final String ALLOWED = "allowed";
-    private AuthzHelper authHelper;
-    private DirectoryHelper directoryHelper;
+    private Authorizer authHelper;
+    private UserStore userStore;
     private TodoStore todoStore;
     private ObjectMapper objectMapper;
 
     public TodosHandler(AuthorizerClient authzClient, DirectoryClient directoryClient, TodoStore todoStore) {
-        authHelper = new AuthzHelper(authzClient);
-        directoryHelper = new DirectoryHelper(directoryClient);
+        authHelper = new Authorizer(authzClient);
+        userStore = new UserStore(directoryClient);
         this.todoStore = todoStore;
         objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
@@ -119,7 +120,8 @@ public class TodosHandler implements HttpHandler {
         JwtDecoder jwtDecoder = new JwtDecoder(jwtToken);
         String payload = jwtDecoder.decodePayload();
         Jwt jwt = objectMapper.readValue(payload, Jwt.class);
-        Object userObject = directoryHelper.getUserByKey(jwt.getSub());
+
+        Object userObject = userStore.getUserByKey(jwt.getSub());
         Map<String, Value> userProperties = userObject.getProperties().getFieldsMap();
 
         return new User(userObject.getKey(),userObject.getDisplayName(), userProperties.get("email").getStringValue(), userProperties.get("picture").getStringValue());

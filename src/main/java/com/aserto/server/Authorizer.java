@@ -10,10 +10,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-public class AuthzHelper {
+public class Authorizer {
     private AuthorizerClient authzClient;
 
-    public AuthzHelper(AuthorizerClient authzClient) {
+    public Authorizer(AuthorizerClient authzClient) {
         this.authzClient = authzClient;
     }
 

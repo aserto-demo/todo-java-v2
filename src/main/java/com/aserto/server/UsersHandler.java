@@ -6,6 +6,7 @@ import com.aserto.authorizer.v2.api.IdentityType;
 import com.aserto.model.IdentityCtx;
 import com.aserto.model.PolicyCtx;
 import com.aserto.model.User;
+import com.aserto.store.UserStore;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.protobuf.Value;
@@ -19,13 +20,13 @@ import java.util.Map;
 
 public class UsersHandler implements HttpHandler {
     private static final String ALLOWED = "allowed";
-    private AuthzHelper authHelper;
-    private DirectoryHelper directoryHelper;
+    private Authorizer authHelper;
+    private UserStore userStore;
     private ObjectMapper objectMapper;
 
     public UsersHandler(AuthorizerClient authzClient, DirectoryClient directoryClient) {
-        authHelper = new AuthzHelper(authzClient);
-        directoryHelper = new DirectoryHelper(directoryClient);
+        authHelper = new Authorizer(authzClient);
+        userStore = new UserStore(directoryClient);
         objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
@@ -60,7 +61,7 @@ public class UsersHandler implements HttpHandler {
             return;
         }
 
-        Object directoryUser = directoryHelper.getUserByKey(personalId);
+        Object directoryUser = userStore.getUserByKey(personalId);
         Map<String, Value> userProperties = directoryUser.getProperties().getFieldsMap();
 
         User user = new User(directoryUser.getKey(),directoryUser.getDisplayName(), userProperties.get("email").getStringValue(), userProperties.get("picture").getStringValue());

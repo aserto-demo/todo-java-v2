@@ -4,9 +4,9 @@ import com.aserto.AuthorizerClient;
 import com.aserto.AuthzClient;
 import com.aserto.ChannelBuilder;
 import com.aserto.DirectoryClient;
+import com.aserto.store.TodoStore;
 import com.sun.net.httpserver.HttpServer;
 import io.grpc.ManagedChannel;
-import com.aserto.TodoStore;
 import com.aserto.EnvConfigLoader;
 
 import java.io.IOException;
