@@ -55,7 +55,7 @@ public class UsersHandler implements HttpHandler {
 
         boolean allowed = authHelper.isAllowed(identityCtx, policyCtx, resourceCtx);
         if (allowed)  {
-            Object directoryUser = directoryHelper.getObject(personalId);
+            Object directoryUser = directoryHelper.getUserByKey(personalId);
             Map<String, Value> userProperties = directoryUser.getProperties().getFieldsMap();
 
             User user = new User(directoryUser.getKey(),directoryUser.getDisplayName(), userProperties.get("email").getStringValue(), userProperties.get("picture").getStringValue());

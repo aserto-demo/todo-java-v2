@@ -17,15 +17,15 @@ public class DirectoryHelper {
         this.directoryClient = directoryClient;
     }
 
-    public Object getObject(String key) {
-        Relation[] relations = getRelation(key);
+    public Object getUserByKey(String key) {
+        Relation[] relations = getRelationFromIdentityToUser(key);
         Object object = null;
 
         switch (relations.length) {
             case 0:
                 throw new RuntimeException("No relations found");
             case 1:
-                object = getObjectFromRelation(relations[0]);
+                object = getSubjectFromRelation(relations[0]);
                 break;
             default:
                 throw new RuntimeException("Too many relations found");
@@ -38,7 +38,7 @@ public class DirectoryHelper {
         return object;
     }
 
-    private Relation[] getRelation(String key) {
+    private Relation[] getRelationFromIdentityToUser(String key) {
         ObjectIdentifier subjectIdentifier = ObjectIdentifier.newBuilder().setType("user").build();
         ObjectIdentifier objectIdentifier = ObjectIdentifier.newBuilder().setKey(key).setType("identity").build();
         RelationTypeIdentifier relationTypeIdentifier = RelationTypeIdentifier.newBuilder().setName("identifier").setObjectType("identity").build();
@@ -56,7 +56,7 @@ public class DirectoryHelper {
         return response.getResultsList().toArray(new Relation[0]);
     }
 
-    private Object getObjectFromRelation(Relation relation) {
+    private Object getSubjectFromRelation(Relation relation) {
         ObjectIdentifier objectIdentifier = relation.getSubject();
         GetObjectRequest.Builder objectBuilder = GetObjectRequest.newBuilder();
         objectBuilder.setParam(objectIdentifier);
