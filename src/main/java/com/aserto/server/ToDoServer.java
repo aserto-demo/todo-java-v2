@@ -26,7 +26,7 @@ public class ToDoServer {
 
           // Create HTTP server
           HttpServer server = HttpServer.create(new InetSocketAddress(3001), 0);
-          server.createContext("/todos", new TodosHandler(authzClient, todoStore));
+          server.createContext("/todos", new TodosHandler(authzClient, directoryClient, todoStore));
           server.createContext("/user", new UsersHandler(authzClient, directoryClient));
 
           server.start();

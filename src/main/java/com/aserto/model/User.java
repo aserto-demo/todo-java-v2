@@ -1,7 +1,5 @@
 package com.aserto.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 public class User {
     private String key;
     private String name;
@@ -18,7 +16,6 @@ public class User {
         this.picture = picture;
     }
 
-    @JsonProperty("sub")
     public String getKey() {
         return key;
     }
@@ -27,7 +24,6 @@ public class User {
         this.key = key;
     }
 
-    @JsonProperty("name")
     public String getName() {
         return name;
     }
@@ -36,7 +32,6 @@ public class User {
         this.name = name;
     }
 
-    @JsonProperty("email")
     public String getEmail() {
         return email;
     }
