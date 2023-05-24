@@ -11,7 +11,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.protobuf.Value;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
-import com.aserto.DatabaseHelper;
+import com.aserto.TodoStore;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -20,12 +20,12 @@ import java.util.Map;
 public class TodosHandler implements HttpHandler {
     private static final String ALLOWED = "allowed";
     private AuthzHelper authHelper;
-    private DatabaseHelper dbHelper;
+    private TodoStore todoStore;
     private ObjectMapper objectMapper;
 
-    public TodosHandler(AuthorizerClient authzClient, DatabaseHelper dbHelper) {
+    public TodosHandler(AuthorizerClient authzClient, TodoStore todoStore) {
         authHelper = new AuthzHelper(authzClient);
-        this.dbHelper = dbHelper;
+        this.todoStore = todoStore;
         objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
@@ -63,7 +63,7 @@ public class TodosHandler implements HttpHandler {
 
         boolean allowed = authHelper.isAllowed(identityCtx, policyCtx);
         if (allowed)  {
-            String response = objectMapper.writeValueAsString(dbHelper.getTodos());
+            String response = objectMapper.writeValueAsString(todoStore.getTodos());
 
             exchange.sendResponseHeaders(200, response.length());
             OutputStream outputStream = exchange.getResponseBody();
@@ -98,7 +98,7 @@ public class TodosHandler implements HttpHandler {
             Todo todo = objectMapper.readValue(value, Todo.class);
             todo.setOwnerID(user.getKey());
 
-            dbHelper.saveTodo(todo);
+            todoStore.saveTodo(todo);
 
             String response = "{\"msg\":\"Todo created\"}";
 
@@ -140,7 +140,7 @@ public class TodosHandler implements HttpHandler {
         if (allowed)  {
             String value = getResponseBody(exchange);
             Todo todo = objectMapper.readValue(value, Todo.class);
-            dbHelper.updateTodoById(todo.getId(), todo);
+            todoStore.updateTodoById(todo.getId(), todo);
 
             String response = "{\"msg\":\"Todo updated\"}";
 
@@ -166,7 +166,7 @@ public class TodosHandler implements HttpHandler {
         if (allowed)  {
             String value = getResponseBody(exchange);
             Todo todo = objectMapper.readValue(value, Todo.class);
-            dbHelper.deleteTodoById(todo.getId());
+            todoStore.deleteTodoById(todo.getId());
 
             String response = "{\"msg\":\"Todo deleted\"}";
 

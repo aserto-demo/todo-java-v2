@@ -5,10 +5,10 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
-public class DatabaseHelper {
+public class TodoStore {
     private SessionFactory sessionFactory;
 
-    public DatabaseHelper() {
+    public TodoStore() {
         Configuration configuration = new Configuration()
                 .addAnnotatedClass(Todo.class)
                 .setProperty("hibernate.connection.driver_class", "org.sqlite.JDBC")

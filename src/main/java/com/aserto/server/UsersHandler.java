@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.protobuf.Value;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import com.aserto.directory.common.v2.Object;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -54,7 +55,7 @@ public class UsersHandler implements HttpHandler {
 
         boolean allowed = authHelper.isAllowed(identityCtx, policyCtx, resourceCtx);
         if (allowed)  {
-            com.aserto.directory.common.v2.Object directoryUser = directoryHelper.getObject(personalId);
+            Object directoryUser = directoryHelper.getObject(personalId);
             Map<String, Value> userProperties = directoryUser.getProperties().getFieldsMap();
 
             User user = new User(directoryUser.getKey(),directoryUser.getDisplayName(), userProperties.get("email").getStringValue(), userProperties.get("picture").getStringValue());

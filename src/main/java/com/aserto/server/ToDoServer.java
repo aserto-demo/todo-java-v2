@@ -6,7 +6,7 @@ import com.aserto.ChannelBuilder;
 import com.aserto.DirectoryClient;
 import com.sun.net.httpserver.HttpServer;
 import io.grpc.ManagedChannel;
-import com.aserto.DatabaseHelper;
+import com.aserto.TodoStore;
 import com.aserto.EnvConfigLoader;
 
 import java.io.IOException;
@@ -22,11 +22,11 @@ public class ToDoServer {
 
           AuthorizerClient authzClient = new AuthzClient(authzChannel);
           DirectoryClient directoryClient = new DirectoryClient(directoryChannel);
-          DatabaseHelper dbHelper = new DatabaseHelper();
+          TodoStore todoStore = new TodoStore();
 
           // Create HTTP server
           HttpServer server = HttpServer.create(new InetSocketAddress(3001), 0);
-          server.createContext("/todos", new TodosHandler(authzClient, dbHelper));
+          server.createContext("/todos", new TodosHandler(authzClient, todoStore));
           server.createContext("/user", new UsersHandler(authzClient, directoryClient));
 
           server.start();
