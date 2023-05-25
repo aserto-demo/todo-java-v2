@@ -11,18 +11,6 @@ public class Utils {
         throw new IllegalStateException("Utility class");
     }
 
-    public static String extractJwt(HttpExchange exchange) {
-        Map<String, String> headersMap = getHeadersMap(exchange);
-        String auth = headersMap.get("Authorization");
-        if (auth == null) {
-            throw new RuntimeException("No authorization header");
-        }
-
-        String[] authTokens = auth.split(" ");
-
-        return authTokens[authTokens.length - 1];
-    }
-
     public static Map<String, String> getHeadersMap(HttpExchange exchange) {
         Headers headers = exchange.getRequestHeaders();
         Map<String, String> headersMap = new HashMap<>();

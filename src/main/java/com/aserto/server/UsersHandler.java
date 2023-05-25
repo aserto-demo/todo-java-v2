@@ -1,10 +1,6 @@
 package com.aserto.server;
 
-import com.aserto.AuthorizerClient;
 import com.aserto.DirectoryClient;
-import com.aserto.authorizer.v2.api.IdentityType;
-import com.aserto.model.IdentityCtx;
-import com.aserto.model.PolicyCtx;
 import com.aserto.model.User;
 import com.aserto.store.UserStore;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -19,13 +15,10 @@ import java.io.OutputStream;
 import java.util.Map;
 
 public class UsersHandler implements HttpHandler {
-    private static final String ALLOWED = "allowed";
-    private Authorizer authorizer;
     private UserStore userStore;
     private ObjectMapper objectMapper;
 
-    public UsersHandler(AuthorizerClient authzClient, DirectoryClient directoryClient) {
-        authorizer = new Authorizer(authzClient);
+    public UsersHandler(DirectoryClient directoryClient) {
         userStore = new UserStore(directoryClient);
         objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
@@ -48,18 +41,7 @@ public class UsersHandler implements HttpHandler {
     }
 
     private void getUsers(HttpExchange exchange) throws IOException {
-        String jwtToken = Utils.extractJwt(exchange);
-        IdentityCtx identityCtx = new IdentityCtx(jwtToken, IdentityType.IDENTITY_TYPE_JWT);
-        PolicyCtx policyCtx = new PolicyCtx("todo", "todo", "todoApp.GET.users.__userID\n", new String[]{ALLOWED});
         String personalId = extractPersonalId(exchange.getRequestURI().toString());
-        Map<String, Value> resourceCtx = java.util.Map.of("personalId", Value.newBuilder().setStringValue(personalId).build());
-
-        boolean allowed = authorizer.isAllowed(identityCtx, policyCtx, resourceCtx);
-        if (!allowed) {
-            exchange.sendResponseHeaders(403, 0);
-            exchange.close();
-            return;
-        }
 
         Object directoryUser = userStore.getUserByKey(personalId);
         Map<String, Value> userProperties = directoryUser.getProperties().getFieldsMap();
