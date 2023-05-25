@@ -31,3 +31,6 @@ mydb.db
 
 # Local config
 .env
+
+# Java specific
+target/
