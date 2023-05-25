@@ -2,7 +2,7 @@ package com.aserto;
 
 import com.aserto.server.ToDoServer;
 
-public class TodoExample {
+public class Todo {
     public static void main(String[] args) throws Exception {
         ToDoServer server = new ToDoServer();
 

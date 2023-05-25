@@ -21,13 +21,13 @@ import java.util.Map;
 
 public class TodosHandler implements HttpHandler {
     private static final String ALLOWED = "allowed";
-    private Authorizer authHelper;
+    private Authorizer authorizer;
     private UserStore userStore;
     private TodoStore todoStore;
     private ObjectMapper objectMapper;
 
     public TodosHandler(AuthorizerClient authzClient, DirectoryClient directoryClient, TodoStore todoStore) {
-        authHelper = new Authorizer(authzClient);
+        authorizer = new Authorizer(authzClient);
         userStore = new UserStore(directoryClient);
         this.todoStore = todoStore;
         objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -65,7 +65,7 @@ public class TodosHandler implements HttpHandler {
         IdentityCtx identityCtx = new IdentityCtx(jwtToken, IdentityType.IDENTITY_TYPE_JWT);
         PolicyCtx policyCtx = new PolicyCtx("todo", "todo", "todoApp.GET.todos", new String[]{ALLOWED});
 
-        boolean allowed = authHelper.isAllowed(identityCtx, policyCtx);
+        boolean allowed = authorizer.isAllowed(identityCtx, policyCtx);
         if (!allowed) {
             exchange.sendResponseHeaders(403, 0);
             return;
@@ -93,7 +93,7 @@ public class TodosHandler implements HttpHandler {
         IdentityCtx identityCtx = new IdentityCtx(jwtToken, IdentityType.IDENTITY_TYPE_JWT);
         PolicyCtx policyCtx = new PolicyCtx("todo", "todo", "todoApp.POST.todos", new String[]{ALLOWED});
 
-        boolean allowed = authHelper.isAllowed(identityCtx, policyCtx);
+        boolean allowed = authorizer.isAllowed(identityCtx, policyCtx);
         if (!allowed) {
             exchange.sendResponseHeaders(403, 0);
             return;
@@ -150,7 +150,7 @@ public class TodosHandler implements HttpHandler {
         String personalId = extractPersonalId(exchange.getRequestURI().toString());
         Map<String, Value> resourceCtx = java.util.Map.of("personalId", Value.newBuilder().setStringValue(personalId).build());
 
-        boolean allowed = authHelper.isAllowed(identityCtx, policyCtx, resourceCtx);
+        boolean allowed = authorizer.isAllowed(identityCtx, policyCtx, resourceCtx);
         if (!allowed) {
             exchange.sendResponseHeaders(403, 0);
             return;
@@ -177,7 +177,7 @@ public class TodosHandler implements HttpHandler {
         String personalId = extractPersonalId(exchange.getRequestURI().toString());
         Map<String, Value> resourceCtx = java.util.Map.of("personalId", Value.newBuilder().setStringValue(personalId).build());
 
-        boolean allowed = authHelper.isAllowed(identityCtx, policyCtx, resourceCtx);
+        boolean allowed = authorizer.isAllowed(identityCtx, policyCtx, resourceCtx);
         if (!allowed) {
             exchange.sendResponseHeaders(403, 0);
             return;
