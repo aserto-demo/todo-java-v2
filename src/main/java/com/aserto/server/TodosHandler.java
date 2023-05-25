@@ -99,10 +99,10 @@ public class TodosHandler implements HttpHandler {
             return;
         }
 
-        User user = getUserFromJwt(jwtToken);
+        String userKey = getUserKeyFromJwt(jwtToken);
         String value = getResponseBody(exchange);
         Todo todo = objectMapper.readValue(value, Todo.class);
-        todo.setOwnerID(user.getKey());
+        todo.setOwnerID(userKey);
 
         todoStore.saveTodo(todo);
 
@@ -116,15 +116,13 @@ public class TodosHandler implements HttpHandler {
         outputStream.close();
     }
 
-    private User getUserFromJwt(String jwtToken) throws JsonProcessingException {
+    private String getUserKeyFromJwt(String jwtToken) throws JsonProcessingException {
         JwtDecoder jwtDecoder = new JwtDecoder(jwtToken);
         String payload = jwtDecoder.decodePayload();
         Jwt jwt = objectMapper.readValue(payload, Jwt.class);
-
         Object userObject = userStore.getUserByKey(jwt.getSub());
-        Map<String, Value> userProperties = userObject.getProperties().getFieldsMap();
 
-        return new User(userObject.getKey(),userObject.getDisplayName(), userProperties.get("email").getStringValue(), userProperties.get("picture").getStringValue());
+        return userObject.getKey();
     }
 
     private String getResponseBody(HttpExchange exchange) throws IOException {
