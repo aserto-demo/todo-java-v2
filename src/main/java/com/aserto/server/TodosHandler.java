@@ -120,7 +120,7 @@ public class TodosHandler implements HttpHandler {
         JwtDecoder jwtDecoder = new JwtDecoder(jwtToken);
         String payload = jwtDecoder.decodePayload();
         Jwt jwt = objectMapper.readValue(payload, Jwt.class);
-        Object userObject = userStore.getUserByKey(jwt.getSub());
+        Object userObject = userStore.getUserBySub(jwt.getSub());
 
         return userObject.getKey();
     }
