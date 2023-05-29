@@ -4,9 +4,11 @@ import com.aserto.AuthorizerClient;
 import com.aserto.DirectoryClient;
 import com.aserto.authorizer.v2.api.IdentityType;
 import com.aserto.model.IdentityCtx;
+import com.aserto.model.Jwt;
 import com.aserto.model.PolicyCtx;
 import com.aserto.model.User;
 import com.aserto.store.UserStore;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.protobuf.Value;
@@ -61,10 +63,7 @@ public class UsersHandler implements HttpHandler {
             return;
         }
 
-        Object directoryUser = userStore.getUserByKey(personalId);
-        Map<String, Value> userProperties = directoryUser.getProperties().getFieldsMap();
-
-        User user = new User(directoryUser.getKey(),directoryUser.getDisplayName(), userProperties.get("email").getStringValue(), userProperties.get("picture").getStringValue());
+        User user = getUser(jwtToken, personalId);
         String response = objectMapper.writeValueAsString(user);
 
         exchange.sendResponseHeaders(200, response.length());
@@ -86,5 +85,25 @@ public class UsersHandler implements HttpHandler {
     private String extractPersonalId(String url) {
         String[] parts = url.split("/");
         return parts[parts.length - 1];
+    }
+
+    private User getUser(String jwtToken, String personalId) throws JsonProcessingException {
+        JwtDecoder jwtDecoder = new JwtDecoder(jwtToken);
+        String payload = jwtDecoder.decodePayload();
+        Jwt jwt = objectMapper.readValue(payload, Jwt.class);
+
+        Object directoryUser;
+        if (jwt.getSub().equals(personalId)) {
+            directoryUser = userStore.getUserBySub(personalId);
+        } else {
+            directoryUser = userStore.getUserByKey(personalId);
+        }
+
+        Map<String, Value> userProperties = directoryUser.getProperties().getFieldsMap();
+
+        return new User(directoryUser.getKey(),
+                directoryUser.getDisplayName(),
+                userProperties.get("email").getStringValue(),
+                userProperties.get("picture").getStringValue());
     }
 }

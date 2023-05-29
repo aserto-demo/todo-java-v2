@@ -17,8 +17,8 @@ public class UserStore {
         this.directoryClient = directoryClient;
     }
 
-    public Object getUserByKey(String key) {
-        Relation[] relations = getRelationFromIdentityToUser(key);
+    public Object getUserBySub(String sub) {
+        Relation[] relations = getRelationFromIdentityToUser(sub);
         Object object = null;
 
         switch (relations.length) {
@@ -36,6 +36,16 @@ public class UserStore {
         }
 
         return object;
+    }
+
+    public Object getUserByKey(String key) {
+        ObjectIdentifier objectIdentifier = ObjectIdentifier.newBuilder().setKey(key).setType("user").build();
+        GetObjectRequest.Builder builder = GetObjectRequest.newBuilder();
+        builder.setParam(objectIdentifier);
+        GetObjectRequest request = builder.build();
+        GetObjectResponse response = directoryClient.getReaderClient().getObject(request);
+
+        return response.getResult();
     }
 
     private Relation[] getRelationFromIdentityToUser(String key) {
