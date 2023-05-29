@@ -145,8 +145,10 @@ public class TodosHandler implements HttpHandler {
         String jwtToken = Utils.extractJwt(exchange);
         IdentityCtx identityCtx = new IdentityCtx(jwtToken, IdentityType.IDENTITY_TYPE_JWT);
         PolicyCtx policyCtx = new PolicyCtx("todo", "todo", "todoApp.PUT.todos.__id", new String[]{ALLOWED});
-        String personalId = extractPersonalId(exchange.getRequestURI().toString());
-        Map<String, Value> resourceCtx = java.util.Map.of("personalId", Value.newBuilder().setStringValue(personalId).build());
+
+        String value = getResponseBody(exchange);
+        Todo todo = objectMapper.readValue(value, Todo.class);
+        Map<String, Value> resourceCtx = java.util.Map.of("ownerID", Value.newBuilder().setStringValue(todo.getOwnerID()).build());
 
         boolean allowed = authorizer.isAllowed(identityCtx, policyCtx, resourceCtx);
         if (!allowed) {
@@ -154,8 +156,6 @@ public class TodosHandler implements HttpHandler {
             return;
         }
 
-        String value = getResponseBody(exchange);
-        Todo todo = objectMapper.readValue(value, Todo.class);
         todoStore.updateTodoById(todo.getId(), todo);
 
         String response = "{\"msg\":\"Todo updated\"}";
@@ -172,8 +172,10 @@ public class TodosHandler implements HttpHandler {
         String jwtToken = Utils.extractJwt(exchange);
         IdentityCtx identityCtx = new IdentityCtx(jwtToken, IdentityType.IDENTITY_TYPE_JWT);
         PolicyCtx policyCtx = new PolicyCtx("todo", "todo", "todoApp.PUT.todos.__id", new String[]{ALLOWED});
-        String personalId = extractPersonalId(exchange.getRequestURI().toString());
-        Map<String, Value> resourceCtx = java.util.Map.of("personalId", Value.newBuilder().setStringValue(personalId).build());
+
+        String value = getResponseBody(exchange);
+        Todo todo = objectMapper.readValue(value, Todo.class);
+        Map<String, Value> resourceCtx = java.util.Map.of("ownerID", Value.newBuilder().setStringValue(todo.getOwnerID()).build());
 
         boolean allowed = authorizer.isAllowed(identityCtx, policyCtx, resourceCtx);
         if (!allowed) {
@@ -181,8 +183,6 @@ public class TodosHandler implements HttpHandler {
             return;
         }
 
-        String value = getResponseBody(exchange);
-        Todo todo = objectMapper.readValue(value, Todo.class);
         todoStore.deleteTodoById(todo.getId());
 
         String response = "{\"msg\":\"Todo deleted\"}";
@@ -192,10 +192,5 @@ public class TodosHandler implements HttpHandler {
         outputStream.write(response.getBytes());
         outputStream.flush();
         outputStream.close();
-    }
-
-    private String extractPersonalId(String url) {
-        String[] parts = url.split("/");
-        return parts[parts.length - 1];
     }
  }
