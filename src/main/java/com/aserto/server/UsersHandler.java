@@ -3,6 +3,7 @@ package com.aserto.server;
 import com.aserto.DirectoryClient;
 import com.aserto.model.User;
 import com.aserto.store.UserStore;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.protobuf.Value;
@@ -43,10 +44,7 @@ public class UsersHandler implements HttpHandler {
     private void getUsers(HttpExchange exchange) throws IOException {
         String personalId = extractPersonalId(exchange.getRequestURI().toString());
 
-        Object directoryUser = userStore.getUserByKey(personalId);
-        Map<String, Value> userProperties = directoryUser.getProperties().getFieldsMap();
-
-        User user = new User(directoryUser.getKey(),directoryUser.getDisplayName(), userProperties.get("email").getStringValue(), userProperties.get("picture").getStringValue());
+        User user = getUser(personalId);
         String response = objectMapper.writeValueAsString(user);
 
         exchange.sendResponseHeaders(200, response.length());
@@ -68,5 +66,21 @@ public class UsersHandler implements HttpHandler {
     private String extractPersonalId(String url) {
         String[] parts = url.split("/");
         return parts[parts.length - 1];
+    }
+
+    private User getUser(String personalId) throws JsonProcessingException {
+//        Object directoryUser;
+//        if (jwt.getSub().equals(personalId)) {
+//            directoryUser = userStore.getUserBySub(personalId);
+//        } else {
+        Object directoryUser = userStore.getUserByKey(personalId);
+//        }
+
+        Map<String, Value> userProperties = directoryUser.getProperties().getFieldsMap();
+
+        return new User(directoryUser.getKey(),
+                directoryUser.getDisplayName(),
+                userProperties.get("email").getStringValue(),
+                userProperties.get("picture").getStringValue());
     }
 }
