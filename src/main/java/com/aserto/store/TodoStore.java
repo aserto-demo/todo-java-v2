@@ -15,7 +15,7 @@ public class TodoStore {
                 .setProperty("hibernate.connection.url", "jdbc:sqlite:mydb.db")
                 .setProperty("hibernate.dialect", "org.hibernate.community.dialect.SQLiteDialect")
                 .setProperty("hibernate.show_sql", "true")
-                .setProperty("hibernate.hdm2ddl.auto", "update")
+                .setProperty("hibernate.hbm2ddl.auto", "update")
                 .setProperty("hibernate.format_sql", "true");
 
         sessionFactory = configuration.buildSessionFactory();
