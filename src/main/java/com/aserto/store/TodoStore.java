@@ -47,11 +47,22 @@ public class TodoStore {
         session.close();
     }
 
+    public Todo getTodo(String id) {
+        Session session = sessionFactory.openSession();
+        session.getTransaction().begin();
+        Todo todo = session.get(Todo.class, id);
+        session.getTransaction().commit();
+        session.close();
+
+        return todo;
+    }
+
     public Todo[] getTodos(){
         Session session = sessionFactory.openSession();
         session.getTransaction().begin();
         Todo[] todoList = session.createQuery("SELECT t FROM Todo t", Todo.class).getResultList().toArray(new Todo[0]);
         session.close();
+
         return todoList;
     }
 }

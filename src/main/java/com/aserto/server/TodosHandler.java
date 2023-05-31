@@ -146,9 +146,13 @@ public class TodosHandler implements HttpHandler {
         IdentityCtx identityCtx = new IdentityCtx(jwtToken, IdentityType.IDENTITY_TYPE_JWT);
         PolicyCtx policyCtx = new PolicyCtx("todo", "todo", "todoApp.PUT.todos.__id", new String[]{ALLOWED});
 
-        String value = getResponseBody(exchange);
-        Todo todo = objectMapper.readValue(value, Todo.class);
+        String todoId = extractTodoId(exchange.getRequestURI().toString());
+        Todo todo = todoStore.getTodo(todoId);
         Map<String, Value> resourceCtx = java.util.Map.of("ownerID", Value.newBuilder().setStringValue(todo.getOwnerID()).build());
+
+        String value = getResponseBody(exchange);
+        Todo requestTodo = objectMapper.readValue(value, Todo.class);
+
 
         boolean allowed = authorizer.isAllowed(identityCtx, policyCtx, resourceCtx);
         if (!allowed) {
@@ -156,7 +160,7 @@ public class TodosHandler implements HttpHandler {
             return;
         }
 
-        todoStore.updateTodoById(todo.getId(), todo);
+        todoStore.updateTodoById(todo.getId(), requestTodo);
 
         String response = "{\"msg\":\"Todo updated\"}";
 
@@ -173,8 +177,8 @@ public class TodosHandler implements HttpHandler {
         IdentityCtx identityCtx = new IdentityCtx(jwtToken, IdentityType.IDENTITY_TYPE_JWT);
         PolicyCtx policyCtx = new PolicyCtx("todo", "todo", "todoApp.PUT.todos.__id", new String[]{ALLOWED});
 
-        String value = getResponseBody(exchange);
-        Todo todo = objectMapper.readValue(value, Todo.class);
+        String todoId = extractTodoId(exchange.getRequestURI().toString());
+        Todo todo = todoStore.getTodo(todoId);
         Map<String, Value> resourceCtx = java.util.Map.of("ownerID", Value.newBuilder().setStringValue(todo.getOwnerID()).build());
 
         boolean allowed = authorizer.isAllowed(identityCtx, policyCtx, resourceCtx);
@@ -192,5 +196,10 @@ public class TodosHandler implements HttpHandler {
         outputStream.write(response.getBytes());
         outputStream.flush();
         outputStream.close();
+    }
+
+    private String extractTodoId(String url) {
+        String[] parts = url.split("/");
+        return parts[parts.length - 1];
     }
  }
