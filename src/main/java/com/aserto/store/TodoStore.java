@@ -5,16 +5,21 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
+import java.util.logging.Level;
+
 public class TodoStore {
     private SessionFactory sessionFactory;
 
     public TodoStore() {
+        // Only log sever errros from Hibernate
+        java.util.logging.Logger.getLogger("org.hibernate").setLevel(Level.SEVERE);
+
         Configuration configuration = new Configuration()
                 .addAnnotatedClass(Todo.class)
                 .setProperty("hibernate.connection.driver_class", "org.sqlite.JDBC")
                 .setProperty("hibernate.connection.url", "jdbc:sqlite:mydb.db")
                 .setProperty("hibernate.dialect", "org.hibernate.community.dialect.SQLiteDialect")
-                .setProperty("hibernate.show_sql", "true")
+                .setProperty("hibernate.show_sql", "false")
                 .setProperty("hibernate.hbm2ddl.auto", "update")
                 .setProperty("hibernate.format_sql", "true");
 
