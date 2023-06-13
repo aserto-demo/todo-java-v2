@@ -11,6 +11,8 @@ cp src/main/resources/.env.example src/main/resources/.env
 
 Update the fallowing values with data from the Aserto console:
 ```
+ASERTO_AUTHORIZER_SERVICE_URL=authorizer.prod.aserto.com:8443
+ASERTO_DIRECTORY_SERVICE_URL=directory.prod.aserto.com:8443
 ASERTO_TENANT_ID={Your Aserto Tenant ID UUID}
 ASERTO_AUTHORIZER_API_KEY={Your Authorizer API Key}
 ASERTO_DIRECTORY_API_KEY={Your Directory (read-only) API Key}
