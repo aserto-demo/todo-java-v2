@@ -49,7 +49,7 @@ public class EnvConfigLoader {
         authzCfg.setApiKey(dotenv.get("ASERTO_AUTHORIZER_API_KEY", ""));
         authzCfg.setToken(dotenv.get("ASERTO_AUTHORIZER_TOKEN", ""));
         authzCfg.setInsecure(dotenv.get("ASERTO_AUTHORIZER_INSECURE", "false").equals("true"));
-        authzCfg.setCaCertPath(dotenv.get("ASERTO_AUTHORIZER_CA_CERT_PATH", ""));
+        authzCfg.setCaCertPath(expandPath(dotenv.get("ASERTO_AUTHORIZER_CERT_PATH", "")));
 
         return authzCfg;
     }
@@ -68,9 +68,13 @@ public class EnvConfigLoader {
         directoryCfg.setApiKey(dotenv.get("ASERTO_DIRECTORY_API_KEY", ""));
         directoryCfg.setToken(dotenv.get("ASERTO_DIRECTORY_TOKEN", ""));
         directoryCfg.setInsecure(dotenv.get("ASERTO_DIRECTORY_INSECURE", "false").equals("true"));
-        directoryCfg.setCaCertPath(dotenv.get("ASERTO_DIRECTORY_CA_CERT_PATH", ""));
+        directoryCfg.setCaCertPath(expandPath(dotenv.get("ASERTO_DIRECTORY_GRPC_CERT_PATH", "")));
 
         return directoryCfg;
+    }
+
+    private String expandPath(String path) {
+        return path.replace("$HOME",  System.getProperty("user.home"));
     }
 
     private Address splitAddress(String address) {
