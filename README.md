@@ -51,7 +51,7 @@ mvn clean package
 To run the examples, execute:
 
 ```bash
-java -jar target/todo-java-v2-0.0.1-shaded.jar
+java -jar target/todo-java-v2.jar
 ```
 
 Run the fallowing commands to test the example:
