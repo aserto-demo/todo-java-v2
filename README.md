@@ -9,7 +9,7 @@ Create the `.env` file in the resources directory
 cp src/main/resources/.env.example src/main/resources/.env
 ```
 
-Update the fallowing values with data for Topaz or for the Aserto hosted authorizer:
+Update the following values with data for Topaz or for the Aserto hosted authorizer:
 ```
 JWKS_URI=https://citadel.demo.aserto.com/dex/keys
 ISSUER=https://citadel.demo.aserto.com/dex
@@ -58,8 +58,8 @@ Run the fallowing commands to test the example:
 
 ### Create todo
 ```bash
-curl --location 'localhost:8500/api/todo' \
---header 'Authorization: Beare <JWT_TOKEN>' \
+curl --location 'localhost:3001/api/todo' \
+--header 'Authorization: Bearer <JWT_TOKEN>' \
 --header 'Content-Type: application/json' \
 --data '{
     "ID": "id-test",
@@ -71,14 +71,14 @@ curl --location 'localhost:8500/api/todo' \
 
 ### Get todos
 ```bash
-curl --location 'localhost:8500/api/todos' \
---header 'Authorization: Beare <JWT_TOKEN>'
+curl --location 'localhost:3001/api/todos' \
+--header 'Authorization: Bearer <JWT_TOKEN>'
 ```
 
 ### Update todo
 ```bash
-curl --location --request PUT 'localhost:8500/api/todo/CiRmZDE2MTRkMy1jMzlhLTQ3ODEtYjdiZC04Yjk2ZjVhNTEwMGQSBWxvY2Fs' \
---header 'Authorization: Beare <JWT_TOKEN>' \
+curl --location --request PUT 'localhost:3001/api/todo/CiRmZDE2MTRkMy1jMzlhLTQ3ODEtYjdiZC04Yjk2ZjVhNTEwMGQSBWxvY2Fs' \
+--header 'Authorization: Bearer <JWT_TOKEN>' \
 --header 'Content-Type: application/json' \
 --data '{
     "ID": "id-test",
@@ -90,8 +90,8 @@ curl --location --request PUT 'localhost:8500/api/todo/CiRmZDE2MTRkMy1jMzlhLTQ3O
 
 ### Delete todo
 ```bash
-curl --location --request DELETE 'localhost:8500/api/todo/CiRmZDE2MTRkMy1jMzlhLTQ3ODEtYjdiZC04Yjk2ZjVhNTEwMGQSBWxvY2Fs' \
---header 'Authorization: Beare <JWT_TOKEN>' \
+curl --location --request DELETE 'localhost:3001/api/todo/CiRmZDE2MTRkMy1jMzlhLTQ3ODEtYjdiZC04Yjk2ZjVhNTEwMGQSBWxvY2Fs' \
+--header 'Authorization: Bearer <JWT_TOKEN>' \
 --header 'Content-Type: application/json' \
 --data '{
     "ID": "id-test",
@@ -103,6 +103,6 @@ curl --location --request DELETE 'localhost:8500/api/todo/CiRmZDE2MTRkMy1jMzlhLT
 
 ### Get user
 ```bash
-curl --location 'localhost:8500/api/user/CiRmZDE2MTRkMy1jMzlhLTQ3ODEtYjdiZC04Yjk2ZjVhNTEwMGQSBWxvY2Fs' \
---header 'Authorization: Beare <JWT_TOKEN>'
+curl --location 'localhost:3001/api/user/CiRmZDE2MTRkMy1jMzlhLTQ3ODEtYjdiZC04Yjk2ZjVhNTEwMGQSBWxvY2Fs' \
+--header 'Authorization: Bearer <JWT_TOKEN>'
 ```
