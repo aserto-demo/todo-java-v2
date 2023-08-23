@@ -3,8 +3,8 @@ package com.aserto.config;
 import com.aserto.authroizer.mapper.policy.NoMatchingMappingException;
 import com.aserto.authroizer.mapper.resource.ResourceMapper;
 import com.aserto.authroizer.mapper.resource.ResourceMapperError;
-import com.aserto.directory.common.v2.Object;
-import com.aserto.store.UserStore;
+import com.aserto.model.Todo;
+import com.aserto.store.TodoStore;
 import com.google.protobuf.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
@@ -14,23 +14,20 @@ import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component
 public class TodoOwnerResourceMapper implements ResourceMapper {
-    private final UserStore userStore;
+    private final TodoStore todoStore;
     private final RequestMappingHandlerMapping handlerMapping;
 
-    public TodoOwnerResourceMapper(UserStore userStore, RequestMappingHandlerMapping handlerMapping) {
-        this.userStore = userStore;
+    public TodoOwnerResourceMapper(TodoStore todoStore, RequestMappingHandlerMapping handlerMapping) {
+        this.todoStore = todoStore;
         this.handlerMapping = handlerMapping;
     }
 
     @Override
-    public Map<String, Value> getResource(HttpServletRequest request) throws ResourceMapperError {
+    public Map<String, Value> getResource(HttpServletRequest request) {
         Map<String, String> params;
         try {
             params = extractParams(request);
@@ -38,19 +35,22 @@ public class TodoOwnerResourceMapper implements ResourceMapper {
             throw new ResourceMapperError(e);
         }
 
-        String idFromRequest = params.get("id");
+        String todoId = params.get("id");
 
-        Object user = userStore.getUserByKey(idFromRequest);
-        String id = user.getId();
-
-        return Map.of("ownerID", Value.newBuilder().setStringValue(id).build());
+        if (todoId != null) {
+            Todo todo = todoStore.getTodo(todoId);
+            String ownerId = todo.getOwnerID();
+            return Map.of("ownerID", Value.newBuilder().setStringValue(ownerId).build());
+        } else {
+            return  Collections.emptyMap();
+        }
     }
 
     public Map<String, String> extractParams(HttpServletRequest request) throws NoMatchingMappingException {
         String uri = request.getRequestURI();
         AntPathMatcher apm = new AntPathMatcher();
         String pattern = "";
-        for (Map.Entry<RequestMappingInfo, HandlerMethod> mappingInfo : this.handlerMapping.getHandlerMethods().entrySet()) {
+        for (Map.Entry<RequestMappingInfo, HandlerMethod> mappingInfo : handlerMapping.getHandlerMethods().entrySet()) {
             PathPatternsRequestCondition pathPatternsCondition = mappingInfo.getKey().getPathPatternsCondition();
             if (pathPatternsCondition == null) {
                 continue;

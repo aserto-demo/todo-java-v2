@@ -2,9 +2,9 @@ package com.aserto.controller;
 
 import com.aserto.model.Todo;
 import com.aserto.directory.common.v2.Object;
-import com.aserto.dto.Response;
+import com.aserto.model.Response;
 import com.aserto.model.Jwt;
-import com.aserto.server.JwtDecoder;
+import com.aserto.helpers.JwtDecoder;
 import com.aserto.store.TodoStore;
 import com.aserto.store.UserStore;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -48,7 +48,6 @@ public class TodosController {
     @PutMapping("/todos/{id}")
     public Response putTodo(@PathVariable String id,
                           @RequestBody Todo requestTodo) {
-        // TODO add authz checks
         Todo todo = todoStore.getTodo(id);
         todoStore.updateTodoById(todo.getId(), requestTodo);
 

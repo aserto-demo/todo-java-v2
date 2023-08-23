@@ -1,4 +1,4 @@
-package com.aserto.dto;
+package com.aserto.model;
 
 public class Response {
     private String msg;

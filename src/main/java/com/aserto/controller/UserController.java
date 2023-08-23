@@ -1,21 +1,15 @@
 package com.aserto.controller;
 
-import com.aserto.ChannelBuilder;
-import com.aserto.DirectoryClient;
-import com.aserto.EnvConfigLoader;
 import com.aserto.directory.common.v2.Object;
 import com.aserto.model.Jwt;
 import com.aserto.model.User;
-import com.aserto.server.JwtDecoder;
+import com.aserto.helpers.JwtDecoder;
 import com.aserto.store.UserStore;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.protobuf.Value;
-import io.grpc.ManagedChannel;
 import org.springframework.web.bind.annotation.*;
 
-import javax.net.ssl.SSLException;
 import java.util.Map;
 
 @RestController
@@ -23,14 +17,9 @@ public class UserController {
     private final ObjectMapper objectMapper;
     private final UserStore userStore;
 
-    public UserController() throws SSLException {
-        objectMapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
-        // TODO Should read config from application.properties file ?
-        EnvConfigLoader envCfgLoader = new EnvConfigLoader();
-        ManagedChannel directoryChannel = new ChannelBuilder(envCfgLoader.getDirectoryConfig()).build();
-        DirectoryClient directoryClient = new DirectoryClient(directoryChannel);
-        userStore = new UserStore(directoryClient);
+    public UserController(UserStore userStore, ObjectMapper objectMapper) {
+        this.userStore = userStore;
+        this.objectMapper = objectMapper;
     }
 
     @CrossOrigin
