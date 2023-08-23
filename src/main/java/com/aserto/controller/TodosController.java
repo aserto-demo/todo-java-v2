@@ -18,8 +18,8 @@ public class TodosController {
 
     private final ObjectMapper objectMapper;
 
-    public TodosController(UserStore userStore, ObjectMapper objectMapper) {
-        this.todoStore = new TodoStore();
+    public TodosController(UserStore userStore, TodoStore todoStore, ObjectMapper objectMapper) {
+        this.todoStore = todoStore;
         this.userStore =  userStore;
         this. objectMapper = objectMapper;
     }

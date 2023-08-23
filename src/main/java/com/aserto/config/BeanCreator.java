@@ -1,8 +1,11 @@
 package com.aserto.config;
 
+import com.aserto.AuthorizerClient;
+import com.aserto.AuthzClient;
 import com.aserto.ChannelBuilder;
 import com.aserto.DirectoryClient;
-import com.aserto.EnvConfigLoader;
+import com.aserto.authroizer.config.loader.spring.AuhorizerLoader;
+import com.aserto.authroizer.config.loader.spring.DirectoryLoader;
 import com.aserto.store.TodoStore;
 import com.aserto.store.UserStore;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -15,11 +18,27 @@ import javax.net.ssl.SSLException;
 
 @Configuration
 public class BeanCreator {
+    private final AuhorizerLoader auhorizerLoader;
+    private final DirectoryLoader directoryLoader;
+
+    public BeanCreator(DirectoryLoader directoryLoader, AuhorizerLoader auhorizerLoader) {
+        this.directoryLoader = directoryLoader;
+        this.auhorizerLoader = auhorizerLoader;
+    }
+
+    @Bean
+    public AuthorizerClient authorizerClientDiscoverer() throws SSLException {
+        ManagedChannel channel = new ChannelBuilder(auhorizerLoader.loadConfig()).build();
+
+        return new AuthzClient(channel);
+    }
+
+
     @Bean
     public UserStore createUserStore() throws SSLException {
-        EnvConfigLoader envCfgLoader = new EnvConfigLoader();
-        ManagedChannel directoryChannel = new ChannelBuilder(envCfgLoader.getDirectoryConfig()).build();
+        ManagedChannel directoryChannel = new ChannelBuilder(directoryLoader.loadConfig()).build();
         DirectoryClient directoryClient = new DirectoryClient(directoryChannel);
+
         return new UserStore(directoryClient);
     }
 
