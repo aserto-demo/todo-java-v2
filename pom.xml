@@ -17,8 +17,8 @@
     <dependencies>
         <dependency>
             <groupId>com.aserto</groupId>
-            <artifactId>aserto-java</artifactId>
-            <version>0.20.6</version>
+            <artifactId>aserto-spring</artifactId>
+            <version>0.0.4</version>
         </dependency>
 
         <dependency>

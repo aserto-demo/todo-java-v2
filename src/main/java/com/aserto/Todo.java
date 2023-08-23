@@ -1,18 +1,14 @@
 package com.aserto;
 
-import com.aserto.server.ToDoServer;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+@SpringBootApplication
 public class Todo {
-    public static void main(String[] args) throws Exception {
-        ToDoServer server = new ToDoServer();
-
-        Thread stopServerHook = new Thread(() -> {
-            try {
-                server.close();
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        });
-        Runtime.getRuntime().addShutdownHook(stopServerHook);
+    public static void main(String[] args) {
+        SpringApplication.run(Todo.class, args);
     }
+
 }
+
+

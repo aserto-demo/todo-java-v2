@@ -3,7 +3,7 @@ package com.aserto.server;
 import com.aserto.AuthorizerClient;
 import com.aserto.DirectoryClient;
 import com.aserto.authorizer.v2.api.IdentityType;
-import com.aserto.dao.Todo;
+import com.aserto.model.Todo;
 import com.aserto.model.*;
 import com.aserto.store.TodoStore;
 import com.aserto.store.UserStore;

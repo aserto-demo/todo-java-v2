@@ -1,4 +1,4 @@
-package com.aserto.dao;
+package com.aserto.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
