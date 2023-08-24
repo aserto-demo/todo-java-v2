@@ -10,15 +10,7 @@ import org.springframework.security.web.SecurityFilterChain;
 public class Security {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.cors().and()
-                .csrf(AbstractHttpConfigurer::disable)
-//                .antMatcher("{*path}")
-//            .addFilterAfter(asertoFilter, RequestHeaderAuthenticationFilter.class)
-//                .authorizeHttpRequests(authz -> authz
-//                        .anyRequest().permitAll()
-//                )
-//                .httpBasic(withDefaults())
-        ;
+        http.cors().and().csrf(AbstractHttpConfigurer::disable);
 
         return http.build();
     }
