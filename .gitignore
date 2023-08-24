@@ -34,3 +34,6 @@ mydb.db
 
 # Java specific
 target/
+
+# App specific
+src/main/resources/application.properties

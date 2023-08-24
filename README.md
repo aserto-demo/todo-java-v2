@@ -1,5 +1,5 @@
 # todo-java-v2
-This application demonstrates how to use [Aserto's Java SDK](https://github.com/aserto-dev/aserto-java) to add an authorization layer to a simple todo app.
+This application demonstrates how to use [Aserto's Java Spring middleware](https://github.com/aserto-dev/aserto-spring) to add an authorization layer to a simple todo app.
 
 [![slack](https://img.shields.io/badge/slack-Aserto%20Community-brightgreen)](https://asertocommunity.slack.com)
 
