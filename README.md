@@ -6,37 +6,47 @@ This application demonstrates how to use [Aserto's Java Spring middleware](https
 ## Setting up the `.env` file
 Create the `.env` file in the resources directory
 ```bash
-cp src/main/resources/.env.example src/main/resources/.env
+cp src/main/resources/application.properties.example src/main/resources/application.properties
 ```
 
 Update the following values with data for Topaz or for the Aserto hosted authorizer:
-```
-JWKS_URI=https://citadel.demo.aserto.com/dex/keys
-ISSUER=https://citadel.demo.aserto.com/dex
-AUDIENCE=citadel-app
+```properties
+--- Authorizer configuration
+aserto.authorizer.host=localhost
+aserto.authorizer.port=8282
+aserto.authorization.enabled=true
+aserto.authorizer.policyRoot=todoApp
+aserto.authorizer.decision=allowed
 
-ASERTO_POLICY_ROOT="todoApp"
+## Topaz
+##  This configuration targets a Topaz instance running locally.
+aserto.authorizer.insecure=false
+aserto.authorizer.grpc.caCertPath=${user.home}/.config/topaz/certs/grpc-ca.crt
 
-# Topaz
-#
-# This configuration targets a Topaz instance running locally.
-# To target an Aserto hosted authorizer, comment out the lines below and uncomment the section
-# at the bottom of this file.
-ASERTO_AUTHORIZER_SERVICE_URL=localhost:8282
-ASERTO_AUTHORIZER_CERT_PATH=$HOME/.config/topaz/certs/grpc-ca.crt
-ASERTO_DIRECTORY_SERVICE_URL=localhost:9292
-ASERTO_DIRECTORY_GRPC_CERT_PATH=$HOME/.config/topaz/certs/grpc-ca.crt
+## Aserto hosted authorizer
+#aserto.tenantId=<tenant_id>
+#aserto.authorizer.policyName=todo
+#aserto.authorizer.policyLabel=todo
+#aserto.authorizer.apiKey=<api_key>
 
-# Aserto hosted authorizer
-#
-# To run the server using an Aserto hosted authorizer, the following variables are required:
-# ASERTO_AUTHORIZER_SERVICE_URL=authorizer.prod.aserto.com:8443
-# ASERTO_DIRECTORY_SERVICE_URL=directory.prod.aserto.com:8443
-# ASERTO_TENANT_ID={Your Aserto Tenant ID UUID}
-# ASERTO_AUTHORIZER_API_KEY={Your Authorizer API Key}
-# ASERTO_DIRECTORY_API_KEY={Your Directory (read-only) API Key}
-# ASERTO_POLICY_INSTANCE_NAME=todo
-# ASERTO_POLICY_INSTANCE_LABEL=todo
+
+
+# --- Directory configuration
+aserto.directory.host=localhost
+aserto.directory.port=9292
+aserto.directory.insecure=false
+
+# Topaz directory
+aserto.directory.grpc.caCertPath=${user.home}/.config/topaz/certs/grpc-ca.crt
+
+## Aserto hosted directory
+#aserto.directory.apiKey=<api_key>
+#aserto.directory.token=<auth_token>
+
+# App configuration
+logging.level.com.aserto=DEBUG
+server.port=3001
+
 
 ```
 
