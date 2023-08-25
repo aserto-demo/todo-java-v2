@@ -6,6 +6,10 @@ import com.aserto.ChannelBuilder;
 import com.aserto.DirectoryClient;
 import com.aserto.authroizer.config.loader.spring.AuhorizerLoader;
 import com.aserto.authroizer.config.loader.spring.DirectoryLoader;
+import com.aserto.authroizer.mapper.extractor.Extractor;
+import com.aserto.authroizer.mapper.extractor.HeaderExtractor;
+import com.aserto.authroizer.mapper.identity.IdentityMapper;
+import com.aserto.authroizer.mapper.identity.JwtIdentityMapper;
 import com.aserto.store.TodoStore;
 import com.aserto.store.UserStore;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -33,6 +37,11 @@ public class BeanCreator {
         return new AuthzClient(channel);
     }
 
+    @Bean
+    public IdentityMapper identityMap() {
+        Extractor headerExtractor = new HeaderExtractor("Authorization");
+        return new JwtIdentityMapper(headerExtractor);
+    }
 
     @Bean
     public UserStore createUserStore() throws SSLException {
