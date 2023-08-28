@@ -1,6 +1,5 @@
 # --- Authorizer configuration
-aserto.authorizer.host=localhost
-aserto.authorizer.port=8282
+aserto.authorizer.serviceUrl=localhost:8282
 aserto.authorization.enabled=true
 aserto.authorizer.policyRoot=todoApp
 aserto.authorizer.decision=allowed
@@ -19,8 +18,7 @@ aserto.authorizer.grpc.caCertPath=${user.home}/.config/topaz/certs/grpc-ca.crt
 
 
 # --- Directory configuration
-aserto.directory.host=localhost
-aserto.directory.port=9292
+aserto.directory.serviceUrl=localhost:9292
 aserto.directory.insecure=false
 
 # Topaz directory
