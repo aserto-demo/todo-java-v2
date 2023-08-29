@@ -26,7 +26,6 @@ aserto.directory.grpc.caCertPath=${user.home}/.config/topaz/certs/grpc-ca.crt
 
 ## Aserto hosted directory
 #aserto.directory.apiKey=<api_key>
-#aserto.directory.token=<auth_token>
 
 # App configuration
 logging.level.com.aserto=DEBUG
