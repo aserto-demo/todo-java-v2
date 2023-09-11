@@ -1,6 +1,6 @@
 package com.aserto.store;
 
-import com.aserto.dao.Todo;
+import com.aserto.model.Todo;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;

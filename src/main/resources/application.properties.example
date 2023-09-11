@@ -1,0 +1,32 @@
+# --- Authorizer configuration
+aserto.authorizer.serviceUrl=localhost:8282
+aserto.authorization.enabled=true
+aserto.authorizer.policyRoot=todoApp
+aserto.authorizer.decision=allowed
+
+## Topaz
+##  This configuration targets a Topaz instance running locally.
+aserto.authorizer.insecure=false
+aserto.authorizer.grpc.caCertPath=${user.home}/.config/topaz/certs/grpc-ca.crt
+
+## Aserto hosted authorizer
+#aserto.tenantId=<tenant_id>
+#aserto.authorizer.policyName=todo
+#aserto.authorizer.policyLabel=todo
+#aserto.authorizer.apiKey=<api_key>
+
+
+
+# --- Directory configuration
+aserto.directory.serviceUrl=localhost:9292
+aserto.directory.insecure=false
+
+# Topaz directory
+aserto.directory.grpc.caCertPath=${user.home}/.config/topaz/certs/grpc-ca.crt
+
+## Aserto hosted directory
+#aserto.directory.apiKey=<api_key>
+
+# App configuration
+logging.level.com.aserto=DEBUG
+server.port=3001

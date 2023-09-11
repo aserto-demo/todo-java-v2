@@ -1,4 +1,4 @@
-package com.aserto.server;
+package com.aserto.helpers;
 
 import java.util.Base64;
 
