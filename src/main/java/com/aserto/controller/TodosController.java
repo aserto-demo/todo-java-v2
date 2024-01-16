@@ -1,7 +1,8 @@
 package com.aserto.controller;
 
+import com.aserto.directory.v3.UninitilizedClientException;
 import com.aserto.model.Todo;
-import com.aserto.directory.common.v2.Object;
+import com.aserto.directory.common.v3.Object;
 import com.aserto.model.Response;
 import com.aserto.model.Jwt;
 import com.aserto.helpers.JwtDecoder;
@@ -34,7 +35,7 @@ public class TodosController {
     @CrossOrigin
     @PostMapping("/todos")
     public Response postTodo(@RequestHeader("Authorization") String jwtAuth,
-                             @RequestBody Todo todo) throws JsonProcessingException {
+                             @RequestBody Todo todo) throws JsonProcessingException, UninitilizedClientException {
         String[] authTokens = jwtAuth.split(" ");
         String jwtToken = authTokens[authTokens.length - 1];
         String userKey = getUserKeyFromJwt(jwtToken);
@@ -72,12 +73,12 @@ public class TodosController {
         return new Response("Todo deleted");
     }
 
-    private String getUserKeyFromJwt(String jwtToken) throws JsonProcessingException {
+    private String getUserKeyFromJwt(String jwtToken) throws JsonProcessingException, UninitilizedClientException {
         JwtDecoder jwtDecoder = new JwtDecoder(jwtToken);
         String payload = jwtDecoder.decodePayload();
         Jwt jwt = objectMapper.readValue(payload, Jwt.class);
         Object userObject = userStore.getUserBySub(jwt.getSub());
 
-        return userObject.getKey();
+        return userObject.getId();
     }
 }

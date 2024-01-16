@@ -1,6 +1,7 @@
 package com.aserto.controller;
 
-import com.aserto.directory.common.v2.Object;
+import com.aserto.directory.common.v3.Object;
+import com.aserto.directory.v3.UninitilizedClientException;
 import com.aserto.model.Jwt;
 import com.aserto.model.User;
 import com.aserto.helpers.JwtDecoder;
@@ -25,14 +26,14 @@ public class UserController {
     @CrossOrigin
     @GetMapping("/users/{userID}")
     public User getUser(@PathVariable String userID,
-                          @RequestHeader("Authorization") String jwtAuth) throws JsonProcessingException {
+                          @RequestHeader("Authorization") String jwtAuth) throws JsonProcessingException, UninitilizedClientException {
         String[] authTokens = jwtAuth.split(" ");
         String jwtToken = authTokens[authTokens.length - 1];
 
         return extractUser(jwtToken, userID);
     }
 
-    private User extractUser(String jwtToken, String personalId) throws JsonProcessingException {
+    private User extractUser(String jwtToken, String personalId) throws JsonProcessingException, UninitilizedClientException {
         JwtDecoder jwtDecoder = new JwtDecoder(jwtToken);
         String payload = jwtDecoder.decodePayload();
         Jwt jwt = objectMapper.readValue(payload, Jwt.class);
@@ -46,7 +47,7 @@ public class UserController {
 
         Map<String, Value> userProperties = directoryUser.getProperties().getFieldsMap();
 
-        return new User(directoryUser.getKey(),
+        return new User(directoryUser.getId(),
                 directoryUser.getDisplayName(),
                 userProperties.get("email").getStringValue(),
                 userProperties.get("picture").getStringValue());
