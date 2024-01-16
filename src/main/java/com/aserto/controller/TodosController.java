@@ -5,29 +5,30 @@ import com.aserto.directory.common.v2.Object;
 import com.aserto.model.Response;
 import com.aserto.model.Jwt;
 import com.aserto.helpers.JwtDecoder;
-import com.aserto.store.TodoStore;
+import com.aserto.store.TodoRepository;
 import com.aserto.store.UserStore;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @RestController
 public class TodosController {
-    private final TodoStore todoStore;
+    private final TodoRepository todoRepository;
     private final UserStore userStore;
-
     private final ObjectMapper objectMapper;
 
-    public TodosController(UserStore userStore, TodoStore todoStore, ObjectMapper objectMapper) {
-        this.todoStore = todoStore;
+    public TodosController(UserStore userStore, TodoRepository todoRepository, ObjectMapper objectMapper) {
+        this.todoRepository = todoRepository;
         this.userStore =  userStore;
         this. objectMapper = objectMapper;
     }
 
     @CrossOrigin
     @GetMapping("/todos")
-    public Todo[] getTodos() {
-        return todoStore.getTodos();
+    public Iterable<Todo> getTodos() {
+        return todoRepository.findAll();
     }
 
     @CrossOrigin
@@ -39,7 +40,7 @@ public class TodosController {
         String userKey = getUserKeyFromJwt(jwtToken);
 
         todo.setOwnerID(userKey);
-        todoStore.saveTodo(todo);
+        todoRepository.save(todo);
 
         return new Response("Todo created");
     }
@@ -48,8 +49,17 @@ public class TodosController {
     @PutMapping("/todos/{id}")
     public Response putTodo(@PathVariable String id,
                           @RequestBody Todo requestTodo) {
-        Todo todo = todoStore.getTodo(id);
-        todoStore.updateTodoById(todo.getId(), requestTodo);
+        Optional<Todo> todoOptional = todoRepository.findById(id);
+        Todo todo = null;
+        if (todoOptional.isPresent()) {
+            todo = todoOptional.get();
+        }
+        else {
+            return new Response("Todo not found");
+        }
+
+        todo.setCompleted(requestTodo.getCompleted());
+        todoRepository.save(todo);
 
         return new Response("Todo updated");
     }
@@ -57,8 +67,7 @@ public class TodosController {
     @CrossOrigin
     @DeleteMapping("/todos/{id}")
     public Response deleteTodo(@PathVariable String id) {
-        Todo todo = todoStore.getTodo(id);
-        todoStore.deleteTodoById(todo.getId());
+        todoRepository.deleteById(id);
 
         return new Response("Todo deleted");
     }
