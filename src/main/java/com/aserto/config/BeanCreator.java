@@ -10,6 +10,7 @@ import com.aserto.authroizer.mapper.extractor.Extractor;
 import com.aserto.authroizer.mapper.extractor.HeaderExtractor;
 import com.aserto.authroizer.mapper.identity.IdentityMapper;
 import com.aserto.authroizer.mapper.identity.JwtIdentityMapper;
+import com.aserto.store.ResourceStore;
 import com.aserto.store.UserStore;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -48,6 +49,14 @@ public class BeanCreator {
         DirectoryClient directoryClient = new DirectoryClient(directoryChannel);
 
         return new UserStore(directoryClient);
+    }
+
+    @Bean
+    public ResourceStore createResourceStore() throws SSLException {
+        ManagedChannel directoryChannel = new ChannelBuilder(directoryLoader.loadConfig()).build();
+        DirectoryClient directoryClient = new DirectoryClient(directoryChannel);
+
+        return new ResourceStore(directoryClient);
     }
 
     @Bean

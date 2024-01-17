@@ -6,10 +6,12 @@ import com.aserto.directory.common.v3.Object;
 import com.aserto.model.Response;
 import com.aserto.model.Jwt;
 import com.aserto.helpers.JwtDecoder;
+import com.aserto.store.ResourceStore;
 import com.aserto.store.TodoRepository;
 import com.aserto.store.UserStore;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
@@ -18,11 +20,13 @@ import java.util.Optional;
 public class TodosController {
     private final TodoRepository todoRepository;
     private final UserStore userStore;
+    private final ResourceStore resourceStore;
     private final ObjectMapper objectMapper;
 
-    public TodosController(UserStore userStore, TodoRepository todoRepository, ObjectMapper objectMapper) {
+    public TodosController(UserStore userStore, TodoRepository todoRepository, ObjectMapper objectMapper, ResourceStore resourceStore) {
         this.todoRepository = todoRepository;
         this.userStore =  userStore;
+        this.resourceStore = resourceStore;
         this. objectMapper = objectMapper;
     }
 
@@ -34,6 +38,7 @@ public class TodosController {
 
     @CrossOrigin
     @PostMapping("/todos")
+    @PreAuthorize("@check.objectType('resource-creator').objectId('resource-creators').relation('member').allowed()")
     public Response postTodo(@RequestHeader("Authorization") String jwtAuth,
                              @RequestBody Todo todo) throws JsonProcessingException, UninitilizedClientException {
         String[] authTokens = jwtAuth.split(" ");
@@ -42,6 +47,7 @@ public class TodosController {
 
         todo.setOwnerID(userKey);
         todoRepository.save(todo);
+        resourceStore.createResourceForUser(todo.getOwnerID(), todo.getId(), todo.getTitle());
 
         return new Response("Todo created");
     }
@@ -67,8 +73,9 @@ public class TodosController {
 
     @CrossOrigin
     @DeleteMapping("/todos/{id}")
-    public Response deleteTodo(@PathVariable String id) {
+    public Response deleteTodo(@PathVariable String id) throws UninitilizedClientException {
         todoRepository.deleteById(id);
+        resourceStore.deleteResource(id);
 
         return new Response("Todo deleted");
     }
