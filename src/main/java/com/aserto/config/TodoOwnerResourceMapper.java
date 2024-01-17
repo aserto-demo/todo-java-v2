@@ -32,9 +32,7 @@ public class TodoOwnerResourceMapper implements ResourceMapper {
         String todoId = params.get("id").getStringValue();
 
         if (!todoId.isEmpty()) {
-            Todo todo = todoRepository.findById(todoId).orElseThrow();
-            String ownerId = todo.getOwnerID();
-            return Map.of("ownerID", Value.newBuilder().setStringValue(ownerId).build());
+            return Map.of("object_id", Value.newBuilder().setStringValue(todoId).build());
         } else {
             return Collections.emptyMap();
         }
