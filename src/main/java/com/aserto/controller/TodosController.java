@@ -38,7 +38,8 @@ public class TodosController {
 
     @CrossOrigin
     @PostMapping("/todos")
-    @PreAuthorize("@check.objectType('resource-creator').objectId('resource-creators').relation('member').allowed()")
+    // @PreAuthorize can be used to do method level authorization
+    // @PreAuthorize("@check.objectType('resource-creator').objectId('resource-creators').relation('member').allowed()")
     public Response postTodo(@RequestHeader("Authorization") String jwtAuth,
                              @RequestBody Todo todo) throws JsonProcessingException, UninitilizedClientException {
         String[] authTokens = jwtAuth.split(" ");
