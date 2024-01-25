@@ -30,3 +30,6 @@ aserto.directory.grpc.caCertPath=${user.home}/.config/topaz/certs/grpc-ca.crt
 # App configuration
 logging.level.com.aserto=DEBUG
 server.port=3001
+
+# Create the schema on startup
+spring.jpa.hibernate.ddl-auto=update
