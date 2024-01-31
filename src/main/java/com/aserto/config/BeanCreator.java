@@ -10,6 +10,7 @@ import com.aserto.authroizer.mapper.extractor.Extractor;
 import com.aserto.authroizer.mapper.extractor.HeaderExtractor;
 import com.aserto.authroizer.mapper.identity.IdentityMapper;
 import com.aserto.authroizer.mapper.identity.JwtIdentityMapper;
+import com.aserto.store.ResourceStore;
 import com.aserto.store.UserStore;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,11 +23,13 @@ import javax.net.ssl.SSLException;
 @Configuration
 public class BeanCreator {
     private final AuhorizerLoader auhorizerLoader;
-    private final DirectoryLoader directoryLoader;
+    private final DirectoryClient directoryClient;
 
-    public BeanCreator(DirectoryLoader directoryLoader, AuhorizerLoader auhorizerLoader) {
-        this.directoryLoader = directoryLoader;
+    public BeanCreator(DirectoryLoader directoryLoader, AuhorizerLoader auhorizerLoader) throws SSLException {
         this.auhorizerLoader = auhorizerLoader;
+
+        ManagedChannel directoryChannel = new ChannelBuilder(directoryLoader.loadConfig()).build();
+        this.directoryClient = new DirectoryClient(directoryChannel);
     }
 
     @Bean
@@ -43,11 +46,13 @@ public class BeanCreator {
     }
 
     @Bean
-    public UserStore createUserStore() throws SSLException {
-        ManagedChannel directoryChannel = new ChannelBuilder(directoryLoader.loadConfig()).build();
-        DirectoryClient directoryClient = new DirectoryClient(directoryChannel);
-
+    public UserStore createUserStore() {
         return new UserStore(directoryClient);
+    }
+
+    @Bean
+    public ResourceStore createResourceStore() {
+        return new ResourceStore(directoryClient);
     }
 
     @Bean
