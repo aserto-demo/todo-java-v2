@@ -7,9 +7,9 @@ import com.aserto.directory.v3.DirectoryClient;
 import com.aserto.authroizer.config.loader.spring.AuhorizerLoader;
 import com.aserto.authroizer.config.loader.spring.DirectoryLoader;
 import com.aserto.authroizer.mapper.extractor.Extractor;
-import com.aserto.authroizer.mapper.extractor.HeaderExtractor;
+import com.aserto.authroizer.mapper.extractor.AuthzHeaderExtractor;
 import com.aserto.authroizer.mapper.identity.IdentityMapper;
-import com.aserto.authroizer.mapper.identity.JwtIdentityMapper;
+import com.aserto.authroizer.mapper.identity.SubjectIdentityMapper;
 import com.aserto.store.ResourceStore;
 import com.aserto.store.UserStore;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -41,8 +41,8 @@ public class BeanCreator {
 
     @Bean
     public IdentityMapper identityMap() {
-        Extractor headerExtractor = new HeaderExtractor("Authorization");
-        return new JwtIdentityMapper(headerExtractor);
+        Extractor headerExtractor = new AuthzHeaderExtractor("Authorization", "sub");
+        return new SubjectIdentityMapper(headerExtractor);
     }
 
     @Bean
