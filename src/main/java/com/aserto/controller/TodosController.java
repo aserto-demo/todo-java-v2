@@ -44,9 +44,9 @@ public class TodosController {
                              @RequestBody Todo todo) throws JsonProcessingException, UninitilizedClientException {
         String[] authTokens = jwtAuth.split(" ");
         String jwtToken = authTokens[authTokens.length - 1];
-        String userKey = getUserKeyFromJwt(jwtToken);
+        String userID = getUserIDFromJwt(jwtToken);
 
-        todo.setOwnerID(userKey);
+        todo.setOwnerID(userID);
         todoRepository.save(todo);
         resourceStore.createResourceForUser(todo.getOwnerID(), todo.getId(), todo.getTitle());
 
@@ -81,7 +81,7 @@ public class TodosController {
         return new Response("Todo deleted");
     }
 
-    private String getUserKeyFromJwt(String jwtToken) throws JsonProcessingException, UninitilizedClientException {
+    private String getUserIDFromJwt(String jwtToken) throws JsonProcessingException, UninitilizedClientException {
         JwtDecoder jwtDecoder = new JwtDecoder(jwtToken);
         String payload = jwtDecoder.decodePayload();
         Jwt jwt = objectMapper.readValue(payload, Jwt.class);

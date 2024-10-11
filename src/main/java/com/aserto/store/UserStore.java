@@ -21,8 +21,8 @@ public class UserStore {
         return objectResponse.getResult();
     }
 
-    public Object getUserByKey(String key) throws UninitilizedClientException {
-        GetObjectResponse response = directoryClient.getObject("user", key);
+    public Object getUserByID(String id) throws UninitilizedClientException {
+        GetObjectResponse response = directoryClient.getObject("user", id);
 
         return response.getResult();
     }
