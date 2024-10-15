@@ -1,8 +1,8 @@
 package com.aserto.config;
 
-import com.aserto.authroizer.mapper.resource.PathParamsResourceMapper;
-import com.aserto.authroizer.mapper.resource.ResourceMapper;
-import com.aserto.authroizer.mapper.resource.ResourceMapperError;
+import com.aserto.authorizer.mapper.resource.PathParamsResourceMapper;
+import com.aserto.authorizer.mapper.resource.ResourceMapper;
+import com.aserto.authorizer.mapper.resource.ResourceMapperError;
 import com.aserto.model.Todo;
 import com.aserto.store.TodoRepository;
 import com.google.protobuf.Value;

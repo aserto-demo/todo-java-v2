@@ -1,8 +1,5 @@
 package com.aserto.config;
 
-import com.aserto.authroizer.AsertoAuthorizationManager;
-import com.aserto.authroizer.AuthzConfig;
-import com.aserto.authroizer.CheckConfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -11,11 +8,15 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.web.SecurityFilterChain;
 
+import com.aserto.authorizer.AsertoAuthorizationManager;
+import com.aserto.authorizer.AuthzConfig;
+import com.aserto.authorizer.CheckConfig;
+
 @Configuration
 // The @EnableMethodSecurity annotation enables Spring Security's pre/post annotations on the controllers
 // @EnableMethodSecurity
 public class Security {
-    private AuthzConfig authzCfg;
+    private final AuthzConfig authzCfg;
     public Security(AuthzConfig authzCfg) {
         this.authzCfg = authzCfg;
     }
