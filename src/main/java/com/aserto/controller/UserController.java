@@ -42,7 +42,7 @@ public class UserController {
         if (jwt.getSub().equals(personalId)) {
             directoryUser = userStore.getUserBySub(personalId);
         } else {
-            directoryUser = userStore.getUserByKey(personalId);
+            directoryUser = userStore.getUserByID(personalId);
         }
 
         Map<String, Value> userProperties = directoryUser.getProperties().getFieldsMap();
