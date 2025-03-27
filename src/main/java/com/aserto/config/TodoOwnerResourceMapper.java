@@ -3,8 +3,6 @@ package com.aserto.config;
 import com.aserto.authorizer.mapper.resource.PathParamsResourceMapper;
 import com.aserto.authorizer.mapper.resource.ResourceMapper;
 import com.aserto.authorizer.mapper.resource.ResourceMapperError;
-import com.aserto.model.Todo;
-import com.aserto.store.TodoRepository;
 import com.google.protobuf.Value;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.stereotype.Component;
@@ -14,11 +12,9 @@ import java.util.*;
 
 @Component
 public class TodoOwnerResourceMapper implements ResourceMapper {
-    private final TodoRepository todoRepository;
     private final PathParamsResourceMapper pathParamsResourceMapper;
 
-    public TodoOwnerResourceMapper(TodoRepository todoRepository, RequestMappingHandlerMapping handlerMapping) {
-        this.todoRepository = todoRepository;
+    public TodoOwnerResourceMapper(RequestMappingHandlerMapping handlerMapping) {
         this.pathParamsResourceMapper = new PathParamsResourceMapper(handlerMapping);
     }
 

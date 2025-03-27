@@ -3,54 +3,57 @@ This application demonstrates how to use [Aserto's Java Spring middleware](https
 
 [![slack](https://img.shields.io/badge/slack-Aserto%20Community-brightgreen)](https://asertocommunity.slack.com)
 
-## Setting up the `.env` file
-Create the `.env` file in the resources directory
+
+## Configuration
+
+Create an `application.properties` file in the resources directory:
+
 ```bash
 cp src/main/resources/application.properties.example src/main/resources/application.properties
 ```
 
 Update the following values with data for Topaz or for the Aserto hosted authorizer:
+
 ```properties
---- Authorizer configuration
-aserto.authorizer.host=localhost
-aserto.authorizer.port=8282
+# --- Authorizer configuration
 aserto.authorization.enabled=true
 aserto.authorizer.policyRoot=todoApp
 aserto.authorizer.decision=allowed
+aserto.authorizer.insecure=false
+aserto.directory.insecure=false
 
 ## Topaz
 ##  This configuration targets a Topaz instance running locally.
-aserto.authorizer.insecure=false
-aserto.authorizer.grpc.caCertPath=${user.home}/.config/topaz/certs/grpc-ca.crt
+##  To use Aserto's hosted services, comment out the lines below and uncomment
+##  the configuration under the "Aserto hosted environment" section.
+aserto.authorizer.serviceUrl=localhost:8282
+aserto.authorizer.grpc.caCertPath=${user.home}/.local/share/topaz/certs/grpc-ca.crt
+aserto.directory.grpc.caCertPath=${user.home}/.local/share/topaz/certs/grpc-ca.crt
 
-## Aserto hosted authorizer
-#aserto.tenantId=<tenant_id>
-#aserto.authorizer.policyName=todo
-#aserto.authorizer.policyLabel=todo
-#aserto.authorizer.apiKey=<api_key>
-
-
-
-# --- Directory configuration
-aserto.directory.host=localhost
-aserto.directory.port=9292
-aserto.directory.insecure=false
-
-# Topaz directory
-aserto.directory.grpc.caCertPath=${user.home}/.config/topaz/certs/grpc-ca.crt
-
-## Aserto hosted directory
-#aserto.directory.apiKey=<api_key>
-#aserto.directory.token=<auth_token>
+## Aserto hosted environment
+##  To run the application against Aserto's hosted environment, uncomment
+##  the lines below and:
+##    1. Replace <tenant_id> with your own tenant ID.
+##    2. Replace <authorizer_key> with your authorizer API key.
+##    2. Replace <directory_key> with your directory API key.
+##
+##  You can find your tenant ID and API keys in the Aserto console (https://console.aserto.com).
+##  Navigate to the Policies section, select the 'todo' policy, and go to 'Settings'.
+##
+# aserto.authorizer.serviceUrl=authorizer.prod.aserto.com:8443
+# aserto.directory.serviceUrl=localhost:9292
+# aserto.tenantId=<tenant_id>
+# aserto.authorizer.policyName=todo
+# aserto.authorizer.policyLabel=todo
+# aserto.authorizer.apiKey=<authorizer_key>
+# aserto.directory.apiKey=<directory_key>
 
 # App configuration
 logging.level.com.aserto=DEBUG
 server.port=3001
 
-# Create schema on startup
+# Create the schema on startup
 spring.jpa.hibernate.ddl-auto=update
-
-
 ```
 
 ## Building

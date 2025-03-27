@@ -15,6 +15,7 @@ import com.aserto.authorizer.mapper.extractor.Extractor;
 import com.aserto.authorizer.mapper.identity.IdentityMapper;
 import com.aserto.authorizer.mapper.identity.SubjectIdentityMapper;
 import com.aserto.directory.v3.DirectoryClient;
+import com.aserto.directory.v3.UninitilizedClientException;
 import com.aserto.store.ResourceStore;
 import com.aserto.store.UserStore;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -27,7 +28,8 @@ public class BeanCreator {
     private final AuthorizerLoader authorizerLoader;
     private final DirectoryClient directoryClient;
 
-    public BeanCreator(DirectoryLoader directoryLoader, AuthorizerLoader authorizerLoader) throws SSLException {
+    public BeanCreator(DirectoryLoader directoryLoader, AuthorizerLoader authorizerLoader)
+            throws SSLException {
         this.authorizerLoader = authorizerLoader;
 
         ManagedChannel directoryChannel = new ChannelBuilder(directoryLoader.loadConfig()).build();
@@ -48,7 +50,7 @@ public class BeanCreator {
     }
 
     @Bean
-    public UserStore createUserStore() {
+    public UserStore createUserStore() throws UninitilizedClientException {
         return new UserStore(directoryClient);
     }
 
